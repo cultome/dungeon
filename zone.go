@@ -61,7 +61,7 @@ func (z *Zone) RemovePlayer(player *Player) error {
 	}
 
 	if foundIdx >= 0 {
-		z.Players[foundIdx] = nil
+		z.Players[foundIdx].Zone = nil
 		z.Players = append(z.Players[:foundIdx], z.Players[foundIdx+1:]...)
 
 		return nil
