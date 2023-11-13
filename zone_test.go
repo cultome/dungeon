@@ -85,3 +85,48 @@ func TestAddPath(t *testing.T) {
 		t.Fatalf("Unable to detect existing path in zone")
 	}
 }
+
+func TestAddThing(t *testing.T) {
+	zone := BuildZone()
+	thing := BuildThingTv()
+
+	if len(zone.Things) != 0 {
+		t.Fatalf("Pre-conditions not met: Things in zone")
+	}
+
+	zone.AddThing(thing)
+
+	if len(zone.Things) != 1 {
+		t.Fatalf("Post-conditions not met: Things in zone")
+	}
+
+	// try to add thing to "another" zone without desassociate first
+	err := zone.AddThing(thing)
+
+	if err == nil {
+		t.Fatalf("Unable to detect thing in another zone")
+	}
+}
+
+func TestRemoveThing(t *testing.T) {
+	zone := BuildZone()
+	thing := BuildThingTv()
+	zone.AddThing(thing)
+
+	if len(zone.Things) != 1 {
+		t.Fatalf("Pre-conditions not met: Things not in zone")
+	}
+
+	zone.RemoveThing(thing)
+
+	if len(zone.Things) != 0 {
+		t.Fatalf("Post-conditions not met: Things still in zone")
+	}
+
+	// try to remove non-existent thing
+	err := zone.RemoveThing(thing)
+
+	if err == nil {
+		t.Fatalf("Failed to detect non-existing thing in zone")
+	}
+}

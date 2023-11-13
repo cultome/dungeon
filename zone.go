@@ -5,6 +5,7 @@ import "fmt"
 type Zone struct {
 	Paths   []*Path
 	Players []*Player
+	Things  []*Thing
 }
 
 func BuildZone() *Zone {
@@ -67,5 +68,37 @@ func (z *Zone) RemovePlayer(player *Player) error {
 		return nil
 	} else {
 		return fmt.Errorf("Player [%+v] is not in zone [%+v]", player, z)
+	}
+}
+
+func (z *Zone) AddThing(thing Thing) error {
+	z.Things = append(z.Things, &thing)
+
+	if thing.GetZone() == nil {
+		thing.SetZone(z)
+
+		return nil
+	} else {
+		return fmt.Errorf("Thing is in another zone [%+v]", thing.GetZone())
+	}
+}
+
+func (z *Zone) RemoveThing(thing Thing) error {
+	foundIdx := -1
+
+	for idx, t := range z.Things {
+		if *t == thing {
+			foundIdx = idx
+			break
+		}
+	}
+
+	if foundIdx >= 0 {
+		(*z.Things[foundIdx]).SetZone(nil)
+		z.Things = append(z.Things[:foundIdx], z.Things[foundIdx+1:]...)
+
+		return nil
+	} else {
+		return fmt.Errorf("Thing [%+v] is not in zone [%+v]", thing, z)
 	}
 }
